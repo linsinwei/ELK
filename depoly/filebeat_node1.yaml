@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: filebeat-node1
+  name: filebeat-node1
+  namespace: wishcloud
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: filebeat-node1
+    spec:
+      volumes:
+        - name: host-volume
+          hostPath:
+            path: /var/LogFiles/wishcloud/
+            type: DirectoryOrCreate
+      containers:
+      - env:
+        - name: filebeat-node1
+          value: Release
+        image: 10.10.100.4:8888/wishcloud/filebeat-image:latest
+        imagePullPolicy: Always
+        name: filebeat-node1
+        volumeMounts:
+        - mountPath: "/usr/share/filebeat/webapplog"
+          name: "host-volume"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200Mi
+      nodeSelector:
+        nodeno: "node1"     
+      imagePullSecrets:
+      - name: regcred

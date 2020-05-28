@@ -1,0 +1,49 @@
+filebeat:
+  prospectors:
+      paths:
+          - "/usr/share/filebeat/webapplog/*/*.log"
+      input_type: log
+      json.keys_under_root: true
+      json.add_error_key: true
+      
+  processors:
+    - truncate_fields:
+      fields:
+      - message
+      max_characters: 4096
+      fail_on_error: false
+      ignore_missing: true   
+
+output.elasticsearch:
+  hosts: ["http://13.76.90.118:9200"]
+  indices:
+    - index: "sport-%{[beat.version]}"
+      when:
+        regexp: 
+            serviceName: ".*sportService.*"   
+      fields: ["serviceName"]
+    - index: "oauth-%{[beat.version]}"
+      when:
+        regexp: 
+            serviceName: ".*oauthService.*"   
+      fields: ["serviceName"]
+    - index: "merchantauth-%{[beat.version]}"
+      when:
+        regexp: 
+            serviceName: ".*merchantAuthService.*"   
+      fields: ["serviceName"]
+    - index: "wallet-%{[beat.version]}"
+      when:
+        regexp: 
+            serviceName: ".*walletService.*"   
+      fields: ["serviceName"]
+    - index: "systemsetting-%{[beat.version]}"
+      when:
+        regexp: 
+            serviceName: ".*systemSettingService.*"   
+      fields: ["serviceName"]
+    - index: "frontendlog-%{[beat.version]}"
+      when:
+        regexp: 
+            serviceName: ".*frontendLoggerService.*"   
+      fields: ["serviceName"]
